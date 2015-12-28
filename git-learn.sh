@@ -9,7 +9,7 @@ git="git --no-pager"
 
 function init {
     $git checkout master
-    $git log --abbrev-commit --pretty=oneline > .git-learn-log
+    $git log --abbrev-commit --pretty=oneline > $log_file
     echo 0 > $revision_file
 }
 
@@ -63,7 +63,8 @@ function whats_new {
 }
 
 function revision_info {
-    $git log -1 --pretty=format:"%B"
+    echo "Current revision: $(get_current_revision) / $(cat $log_file | wc -l)"
+    $git log -1
 }
 
 while [[ $# > 0 ]]
@@ -75,23 +76,29 @@ do
             init
             checkout_next_revision
             echo "Start learning."
-            shift
             ;;
         -n|--next)
             checkout_next_revision
-            shift
             ;;
         -p|--prev|--previous)
             checkout_previous_revision
-            shift
+            ;;
+        -n=*|--next=*)
+            next="${arg#*=}"
+            set_current_revision $(($(get_current_revision) + $next - 1))
+            checkout_next_revision
+            ;;
+        -p=*|--prev=*|--previous=*)
+            prev="${arg#*=}"
+            set_current_revision $(($(get_current_revision) - $prev + 1))
+            checkout_previous_revision
             ;;
         -c|--changes)
             whats_new
-            shift
             ;;
-        -s|--scope)
+        -s|--status)
             revision_info
-            shift
             ;;
     esac
+    shift
 done
