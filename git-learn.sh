@@ -1,9 +1,11 @@
 #!/bin/bash
 
-revision_file="./.git-learn-current-revision"
-log_file="./.git-learn-log"
+base_path="./.git/git-learn"
+mkdir -p $base_path
+
+revision_file="$base_path/current-revision"
+log_file="$base_path/log"
 git="git --no-pager"
-echo "" > .logfile
 
 function init {
     $git checkout master
