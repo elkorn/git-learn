@@ -58,8 +58,13 @@ function checkout_revision {
     $git checkout $1
 }
 
+
 function whats_new {
     $git diff $(get_revision_hash $(get_previous_revision)) --word-diff
+}
+
+function change_summary {
+    $git diff $(get_revision_hash $(get_previous_revision)) --stat
 }
 
 function revision_info {
@@ -74,27 +79,36 @@ do
     case $arg in
         -i|--init)
             init
-            checkout_next_revision
+            checkout_next_revision &> /dev/null
+            revision_info
             echo "Start learning."
             ;;
         -n|--next)
-            checkout_next_revision
+            checkout_next_revision &> /dev/null
+            revision_info
             ;;
         -p|--prev|--previous)
-            checkout_previous_revision
+            checkout_previous_revision &> /dev/null
+            revision_info
             ;;
         -n=*|--next=*)
             next="${arg#*=}"
             set_current_revision $(($(get_current_revision) + $next - 1))
-            checkout_next_revision
+            checkout_next_revision &> /dev/null
+            revision_info
             ;;
         -p=*|--prev=*|--previous=*)
             prev="${arg#*=}"
             set_current_revision $(($(get_current_revision) - $prev + 1))
-            checkout_previous_revision
+            checkout_previous_revision &> /dev/null
+            revision_info
             ;;
         -c|--changes)
             whats_new
+            change_summary
+            ;;
+        -cs|--change_summary)
+            change_summary
             ;;
         -s|--status)
             revision_info
