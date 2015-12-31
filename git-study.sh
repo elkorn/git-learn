@@ -1,6 +1,6 @@
 #!/bin/bash
 
-base_path="./.git/git-learn"
+base_path="./.git/git-study"
 mkdir -p $base_path
 
 revision_file="$base_path/current-revision"
